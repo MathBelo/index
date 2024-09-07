@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Frutas Sazonais</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        .fruta-item {
+            margin-bottom: 15px;
+        }
+        .dica {
+            font-size: 0.9em;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Consulta de Frutas Sazonais</h1>
+    <p id="estacaoAtual"></p>
+    <ul id="listaFrutas"></ul>
+
+    <p>
+        Deseja saber a disponibilidade de outra estação? 
+        <input type="text" id="estacaoInput" placeholder="Digite: VERAO, OUTONO, INVERNO, PRIMAVERA">
+        <button onclick="consultarOutraEstacao()">Consultar</button>
+    </p>
+
+    <script>
+        const frutasPorEstacao = {
+            "VERAO": [
+                { nome: "Manga", precoMin: 6.00, precoMax: 8.50, dica: "Escolha mangas com a casca ligeiramente macia e sem manchas." },
+                { nome: "Abacaxi", precoMin: 5.00, precoMax: 7.50, dica: "Procure um abacaxi com aroma doce e folhas fáceis de remover." },
+                { nome: "Melancia", precoMin: 2.50, precoMax: 5.00, dica: "Escolha melancias com som oco ao bater e casca firme." },
+                { nome: "Maracujá", precoMin: 8.00, precoMax: 12.00, dica: "Prefira maracujás com a casca enrugada, pois estão mais doces." },
+                { nome: "Caju", precoMin: 5.00, precoMax: 8.00, dica: "Opte por cajus com casca brilhante e sem manchas escuras." },
+                { nome: "Acerola", precoMin: 10.00, precoMax: 15.00, dica: "A acerola deve estar bem vermelha e firme ao toque." },
+                { nome: "Pitaia", precoMin: 25.00, precoMax: 40.00, dica: "Escolha pitaias de casca firme e de cor viva." },
+                { nome: "Jaca", precoMin: 5.00, precoMax: 10.00, dica: "Prefira jacas com aroma forte e casca amarelada." }
+            ],
+            "OUTONO": [
+                { nome: "Banana", precoMin: 2.00, precoMax: 5.00, dica: "Bananas com pequenas manchas escuras estão no ponto para consumo." },
+                { nome: "Maçã", precoMin: 6.00, precoMax: 9.00, dica: "Escolha maçãs firmes, sem amassados ou manchas." },
+                { nome: "Pera", precoMin: 7.00, precoMax: 11.00, dica: "Peras maduras têm a casca levemente macia ao toque." },
+                { nome: "Caqui", precoMin: 4.00, precoMax: 8.00, dica: "Prefira caquis de casca lisa e brilhante, sem rachaduras." },
+                { nome: "Romã", precoMin: 20.00, precoMax: 35.00, dica: "A casca da romã deve estar lisa e de cor intensa." },
+                { nome: "Uva", precoMin: 8.00, precoMax: 15.00, dica: "Escolha cachos de uvas com as frutas bem presas aos galhos." },
+                { nome: "Abacate", precoMin: 6.00, precoMax: 10.00, dica: "O abacate maduro cede levemente ao pressionar com os dedos." },
+                { nome: "Figo", precoMin: 18.00, precoMax: 30.00, dica: "Procure figos com a pele lisa e sem rachaduras." }
+            ],
+            "INVERNO": [
+                { nome: "Laranja", precoMin: 2.50, precoMax: 6.00, dica: "Laranjas pesadas e com casca firme são as mais suculentas." },
+                { nome: "Tangerina", precoMin: 3.00, precoMax: 5.50, dica: "Prefira tangerinas de cor viva e casca macia ao toque." },
+                { nome: "Kiwi", precoMin: 10.00, precoMax: 15.00, dica: "O kiwi deve ceder levemente quando pressionado." },
+                { nome: "Morango", precoMin: 12.00, precoMax: 18.00, dica: "Escolha morangos vermelhos e sem sinais de mofo." },
+                { nome: "Goiaba", precoMin: 4.00, precoMax: 7.50, dica: "Goiabas com casca macia e perfumada estão no ponto para consumo." },
+                { nome: "Limão", precoMin: 3.00, precoMax: 5.00, dica: "Prefira limões com casca brilhante e lisa." },
+                { nome: "Ameixa", precoMin: 15.00, precoMax: 22.00, dica: "A ameixa deve ser levemente macia e de cor uniforme." },
+                { nome: "Carambola", precoMin: 5.00, precoMax: 8.00, dica: "Escolha carambolas firmes e de cor amarela vibrante." }
+            ],
+            "PRIMAVERA": [
+                { nome: "Mamão", precoMin: 4.00, precoMax: 7.00, dica: "Mamões com casca levemente amarelada estão prontos para o consumo." },
+                { nome: "Coco", precoMin: 3.50, precoMax: 6.00, dica: "O coco deve ter uma casca firme e sem rachaduras." },
+                { nome: "Pitanga", precoMin: 12.00, precoMax: 20.00, dica: "Prefira pitangas bem vermelhas e firmes." },
+                { nome: "Jabuticaba", precoMin: 12.00, precoMax: 18.00, dica: "Jabuticabas brilhantes e lisas são as melhores." },
+                { nome: "Maracujá", precoMin: 8.00, precoMax: 12.00, dica: "Maracujás com casca enrugada estão mais doces e prontos para consumo." },
+                { nome: "Pitaia", precoMin: 25.00, precoMax: 40.00, dica: "Pitaias de casca firme e brilhante são as melhores." },
+                { nome: "Pêssego", precoMin: 12.00, precoMax: 20.00, dica: "Escolha pêssegos de casca suave e levemente macia ao toque." },
+                { nome: "Fruta-do-conde", precoMin: 20.00, precoMax: 30.00, dica: "A fruta-do-conde deve ser macia ao toque quando madura." }
+            ]
+        };
+
+        function determinarEstacaoAtual() {
+            const mesAtual = new Date().getMonth() + 1;
+            if ([12, 1, 2].includes(mesAtual)) return "VERAO";
+            if ([3, 4, 5].includes(mesAtual)) return "OUTONO";
+            if ([6, 7, 8].includes(mesAtual)) return "INVERNO";
+            return "PRIMAVERA";
+        }
+
+        function listarFrutas(estacao) {
+            const listaFrutas = document.getElementById("listaFrutas");
+            listaFrutas.innerHTML = "";
+            frutasPorEstacao[estacao].forEach(fruta => {
+                const item = document.createElement("li");
+                item.classList.add("fruta-item");
+                item.innerHTML = `<strong>${fruta.nome}</strong> (R$ ${fruta.precoMin.toFixed(2)} - R$ ${fruta.precoMax.toFixed(2)} por kg)<br>
+                                  <span class="dica">Dica: ${fruta.dica}</span>`;
+                listaFrutas.appendChild(item);
+            });
+        }
+
+        function consultarOutraEstacao() {
+            const estacaoInput = document.getElementById("estacaoInput").value.toUpperCase();
+            if (frutasPorEstacao[estacaoInput]) {
+                listarFrutas(estacaoInput);
+                document.getElementById("estacaoAtual").textContent = "Frutas da estação: " + estacaoInput;
+            } else {
+                alert("Estação inválida. Tente: VERAO, OUTONO, INVERNO, PRIMAVERA.");
+            }
+        }
+
+        // Inicialização
+        const estacaoAtual = determinarEstacaoAtual();
+        document.getElementById("estacaoAtual").textContent = "Estamos no(a): " + estacaoAtual;
+        listarFrutas(estacaoAtual);
+
+    </script>
+
+</body>
+</html>
+
